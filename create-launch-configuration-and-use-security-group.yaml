@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template to define a security group.
+Parameters:
+    AmiImageId:
+        Description: Defined AMI image id.
+        Type: String
+        Default: ami-013f17f36f8b1fefb
+
+Resources:
+    ElbSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupName: test-sg
+            GroupDescription: Create a security group for ssh and http routing.
+            SecurityGroupIngress:
+                -
+                    IpProtocol: tcp
+                    FromPort: 22
+                    ToPort: 22
+                    CidrIp: 180.211.111.242/32
+                - 
+                    IpProtocol: tcp
+                    FromPort: 443
+                    ToPort: 443
+                    CidrIp: 180.211.111.242/32
+                -
+                    IpProtocol: tcp
+                    FromPort: 80
+                    ToPort: 80
+                    CidrIp: 180.211.111.242/32
+    
+    TestLaunchConfiguration:
+        Type: AWS::AutoScaling::LaunchConfiguration
+        Properties:
+            LaunchConfigurationName: test-launch-config
+            ImageId: !Ref AmiImageId
+            InstanceType: t2.medium
+            SecurityGroups:
+                - !Ref ElbSecurityGroup
+
+
